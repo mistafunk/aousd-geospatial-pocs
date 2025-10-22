@@ -1,0 +1,11 @@
+[project]
+name = "ddk-usd-sandbox"
+version = "0.1.0"
+description = "Experiments with OpenUSD"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pycrs>=1.0.2",
+    "pyproj>=3.7.2",
+    "usd-core>=25.8",
+]
