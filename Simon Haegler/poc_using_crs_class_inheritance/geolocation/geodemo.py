@@ -76,14 +76,15 @@ def traverse_and_print_geolocation(stage_path, target_crs=None):
 			)
 			print(f"  Local to World Transform: {local_to_world}")
 
-		wkt_attr = prim.GetAttribute("crs:wkt")
+		wkt_attr_name = "crs:wkt"
+		wkt_attr = get_attribute(prim, wkt_attr_name)
 		if not wkt_attr:
 			print("  Prim is not georeferenced.")
 			continue
 
 		if not (wkt_attr and wkt_attr.HasAuthoredValue()):
-			print(f"Warning: 'crs:wkt' attribute not found` in {prim_path}.")
-			return None
+			print(f"Warning: '{wkt_attr_name}' attribute not found` in {prim_path}.")
+			continue
 
 		crs = from_ogc_wkt(wkt_attr.Get())
 		print(f"  Prim CRS: {wkt_attr} ({crs.name})")
@@ -97,6 +98,15 @@ def traverse_and_print_geolocation(stage_path, target_crs=None):
 			print(
 				f"  Transformed coordinates: ({x_t}, {y_t}, {z}) in target CRS: {target_crs.name}"
 			)
+
+
+def get_attribute(prim, name):
+	current = prim
+	while current.IsValid() and not current.HasAttribute(name):
+		current = current.GetParent()
+	if current.IsValid():
+		return current.GetAttribute(name)
+	return None
 
 
 def transform(x, y, from_crs, to_crs):
